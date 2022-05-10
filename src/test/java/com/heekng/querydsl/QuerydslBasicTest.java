@@ -70,4 +70,29 @@ public class QuerydslBasicTest {
 
         assertThat(findMember.getUsername()).isEqualTo("member1");
     }
+
+    @Test
+    public void search() {
+        // where 절에 and 연산으로 쿼리에 and 사용 가능하다.
+        Member findMember = queryFactory
+                .selectFrom(member)
+                .where(member.username.eq("member1").and(member.age.between(10, 30)))
+                .fetchOne();
+
+        assertThat(findMember.getUsername()).isEqualTo("member1");
+    }
+
+    @Test
+    public void searchAndParam() {
+        // where 절에 파라미터를 ,으로 나누면 자동으로 and 연산 된다.
+        Member findMember = queryFactory
+                .selectFrom(member)
+                .where(
+                        member.username.eq("member1"),
+                        member.age.eq(10)
+                )
+                .fetchOne();
+
+        assertThat(findMember.getUsername()).isEqualTo("member1");
+    }
 }
