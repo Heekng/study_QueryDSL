@@ -3,6 +3,7 @@ package com.heekng.querydsl;
 import com.heekng.querydsl.entity.Member;
 import com.heekng.querydsl.entity.QMember;
 import com.heekng.querydsl.entity.Team;
+import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import java.util.List;
 
 import static com.heekng.querydsl.entity.QMember.member;
 import static org.assertj.core.api.Assertions.*;
@@ -94,5 +97,35 @@ public class QuerydslBasicTest {
                 .fetchOne();
 
         assertThat(findMember.getUsername()).isEqualTo("member1");
+    }
+
+    @Test
+    public void resultFetch() {
+        // 리스트
+//        List<Member> fetch = queryFactory
+//                .selectFrom(member)
+//                .fetch();
+
+        //단건조회
+//        Member fetchOne = queryFactory
+//                .selectFrom(member)
+//                .fetchOne();
+//
+        // 첫번째 받아오기
+//        Member fetchFirst = queryFactory
+//                .selectFrom(member)
+//                .fetchFirst();
+
+        // 미리 저장하고, total, content 등을 가져올 때 쿼리를 조회한다.
+//        QueryResults<Member> results = queryFactory
+//                .selectFrom(member)
+//                .fetchResults();
+//        results.getTotal();
+//        List<Member> content = results.getResults();
+
+        // 개수 가져오기
+        long total = queryFactory
+                .selectFrom(member)
+                .fetchCount();
     }
 }
