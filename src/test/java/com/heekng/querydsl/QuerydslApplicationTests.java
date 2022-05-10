@@ -1,7 +1,7 @@
 package com.heekng.querydsl;
 
 import com.heekng.querydsl.entity.Hello;
-import com.heekng.querydsl.controller.entity.QHello;
+import com.heekng.querydsl.entity.QHello;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
