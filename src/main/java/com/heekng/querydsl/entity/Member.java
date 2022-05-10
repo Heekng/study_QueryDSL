@@ -1,4 +1,4 @@
-package com.heekng.querydsl.controller.entity;
+package com.heekng.querydsl.entity;
 
 import lombok.*;
 
