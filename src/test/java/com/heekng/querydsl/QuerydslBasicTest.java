@@ -22,6 +22,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -665,7 +666,51 @@ public class QuerydslBasicTest {
 
     // 광고 상태 isValid, 날짜가 IN : isServiceable인 경우와 같이 재사용성에서 얻을 수 있는 장점이 있다.
     private Predicate allEq(String usernameCond, Integer ageCond) {
+        // null check 주의
         return usernameEq(usernameCond).and(ageEq(ageCond));
     }
 
+    @Test
+//    @Commit
+    void buildUpdate() throws Exception {
+        //member1 = 10 -> 비회원
+        //member2 = 20 -> 비회원
+        //member3 = 30 -> 유지
+        //member4 = 40 -> 유지
+
+        //벌크연산은 영속성 컨텍스트의 상태를 변경하지 않는다.
+        long count = queryFactory
+                .update(member)
+                .set(member.username, "비회원")
+                .where(member.age.lt(28))
+                .execute();
+
+        // 때문에 벌크연산 이후에는 영속성 컨텍스트를 초기화하며 DB와 맞게 재설정한다.
+        em.flush();
+        em.clear();
+
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .fetch();
+
+        for (Member member1 : result) {
+            System.out.println("member1 = " + member1);
+        }
+    }
+
+    @Test
+    void bulkAdd() throws Exception {
+        long count = queryFactory
+                .update(member)
+                .set(member.age, member.age.multiply(1))
+                .execute();
+    }
+
+    @Test
+    void bulkDelete() throws Exception {
+        long count = queryFactory
+                .delete(member)
+                .where(member.age.gt(18))
+                .execute();
+    }
 }
