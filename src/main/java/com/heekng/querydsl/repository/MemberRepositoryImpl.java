@@ -7,10 +7,12 @@ import com.heekng.querydsl.entity.Member;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQueryFactory;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -117,8 +119,20 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom{
                         ageLoe(condition.getAgeLoe())
                 )
                 .fetchCount();
+        JPAQuery<Member> countQuery = queryFactory
+                .select(member)
+                .from(member)
+                .leftJoin(member.team, team)
+                .where(
+                        usernameEq(condition.getUsername()),
+                        teamNameEq(condition.getTeamName()),
+                        ageGoe(condition.getAgeGoe()),
+                        ageLoe(condition.getAgeLoe())
+                );
 
-        return new PageImpl<>(content, pageable, total);
+//        return new PageImpl<>(content, pageable, total);
+        //PageAbleExecutionUtils를 이용하면 첫 페이지의 컨텐츠 개수가 pageSize 보다 적거나 마지막 페이지가 아닐 떄에만 함수를 호출해 쿼리 호출 횟수를 줄여준다.
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchCount);
     }
 
     // Predicate 보다 BooleanExpression을 쓰는게 좋다
