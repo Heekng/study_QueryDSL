@@ -1,6 +1,7 @@
 package com.heekng.querydsl;
 
 import com.heekng.querydsl.dto.MemberDto;
+import com.heekng.querydsl.dto.QMemberDto;
 import com.heekng.querydsl.dto.UserDto;
 import com.heekng.querydsl.entity.Member;
 import com.heekng.querydsl.entity.QMember;
@@ -587,5 +588,16 @@ public class QuerydslBasicTest {
         // 생성자 방식의 경우 Dto더라도 그냥 사용하면 된다.
     }
 
-
+    @Test
+    void findDtoByQueryProjection() throws Exception {
+        // constructor과 비슷한 방식이지만 컴파일 시점에서 에러를 잡을 수 있다는 장점이 있다.
+        // 가장 안전한 방식이지만
+        List<MemberDto> result = queryFactory
+                .select(new QMemberDto(member.username, member.age))
+                .from(member)
+                .fetch();
+        for (MemberDto memberDto : result) {
+            System.out.println("memberDto = " + memberDto);
+        }
+    }
 }
